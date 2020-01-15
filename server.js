@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 
 /*  ROUTE */
 app.get("/", (req, res) => {
-  res.send("ok");
+  res.send("ok 2");
 });
 
 /* THIS IS A VERYIFICATION ROUTE. THIS WILL BE HIT BY FACEBOOK TO VERIFY */
