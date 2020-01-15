@@ -10,12 +10,22 @@ const request = require("request");
 const mongoose = require("mongoose");
 const connetdb = require("./api/dependencies/connectdb");
 const cors = require("./api/dependencies/cors");
-var token =
-  "EAAMINrDZAmQUBAHoRCyAkyqetO9FXjxK2JZAItV1g9o6DuBmNbMJHaeG1dXPRzYmf8yzwR5dJZBhY4ZCCuLQvyoHKZA1egiyDmQ0FlbqUZCwoc5Q5ZBv6ph6hNOgLCWkb1kfp9hZC8jBIHADnAlTgn7ZClIjyZCwdo4ZC6TdWQK2ftDwQZDZD";
+var PAGE_ACCESS_TOKEN =
+  "EAAMINrDZAmQUBAGKLDah4vMqb9Boe747GKpp73k8OSZCvnNQA4uDZC6uU1kxJaJDEETmXRO4n7QrHrKftlQTpL9zHYCCKkzrfMgumVV1J7v1r8N8epIsCOo6fMl46q3fKFuLmyg1UO5ZCZA6A3C3ChvEbAErRq7YUSiEYDold0QZDZD";
 
 /* MONGODB CONNECTION */
 
 connetdb();
+/* helper functions  */
+
+// Handles messages events
+function handleMessage(sender_psid, received_message) {}
+
+// Handles messaging_postbacks events
+function handlePostback(sender_psid, received_postback) {}
+
+// Sends response messages via the Send API
+function callSendAPI(sender_psid, response) {}
 
 /* MIDDLEWARES */
 
@@ -85,10 +95,18 @@ app.post("/webhook", (req, res) => {
   if (body.object === "page") {
     // Iterates over each entry - there may be multiple if batched
     body.entry.forEach(function(entry) {
-      // Gets the message. entry.messaging is an array, but
-      // will only ever contain one message, so we get index 0
+      /* 
+        - Gets the message. entry.messaging is an array, but
+          will only ever contain one message, so we get index 0
+
+        - Gets the body of the webhook event
+                                                                */
       let webhook_event = entry.messaging[0];
       console.log(webhook_event);
+
+      // Get the sender PSID
+      let sender_psid = webhook_event.sender.id;
+      console.log("Sender PSID: " + sender_psid);
     });
 
     // Returns a '200 OK' response to all requests
