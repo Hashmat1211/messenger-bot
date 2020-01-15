@@ -1,3 +1,5 @@
+"use strict";
+
 /* IMPORTING MODULES */
 
 const express = require("express");
@@ -8,6 +10,8 @@ const request = require("request");
 const mongoose = require("mongoose");
 const connetdb = require("./api/dependencies/connectdb");
 const cors = require("./api/dependencies/cors");
+var token =
+  "EAAMINrDZAmQUBAHoRCyAkyqetO9FXjxK2JZAItV1g9o6DuBmNbMJHaeG1dXPRzYmf8yzwR5dJZBhY4ZCCuLQvyoHKZA1egiyDmQ0FlbqUZCwoc5Q5ZBv6ph6hNOgLCWkb1kfp9hZC8jBIHADnAlTgn7ZClIjyZCwdo4ZC6TdWQK2ftDwQZDZD";
 
 /* MONGODB CONNECTION */
 
@@ -35,18 +39,64 @@ app.use((req, res, next) => {
 });
 
 /*  ROUTE */
-
-app.get("/", function(req, res) {
-  console.log("hi");
-  res.send("Hello world!");
+app.get("/", (req, res) => {
+  res.send("ok");
 });
 
 /* THIS IS A VERYIFICATION ROUTE. THIS WILL BE HIT BY FACEBOOK TO VERIFY */
-app.get("/mybot", function(req, res) {
-  if (req.query["hub.verify_token"] === "THIS_IS_MY_VERIFICATION_TOKEN") {
-    res.send(req.query["hub.challenge"]);
+
+// Adds support for GET requests to our webhook
+app.get("/webhook", (req, res) => {
+  // Your verify token. Should be a random string.
+  let VERIFY_TOKEN = "this_is_a_secret_token";
+
+  // Parse the query params
+  let mode = req.query["hub.mode"];
+  let token = req.query["hub.verify_token"];
+  let challenge = req.query["hub.challenge"];
+  console.log("mode \n", mode);
+  console.log("token \n", token);
+  console.log("challenge\n", challenge);
+
+  // Checks if a token and mode is in the query string of the request
+  if (mode && token) {
+    // Checks the mode and token sent is correct
+    if (mode === "subscribe" && token === VERIFY_TOKEN) {
+      // Responds with the challenge token from the request
+      console.log("WEBHOOK_VERIFIED");
+      res.status(200).send(challenge);
+    } else {
+      // Responds with '403 Forbidden' if verify tokens do not match
+
+      console.log("WEBHOOK_IS_NOT_VERIFIED");
+
+      res.sendStatus(403);
+    }
   }
-  res.send("Wrong token!");
+});
+
+// Creates the endpoint for our webhook
+app.post("/webhook", (req, res) => {
+  let body = req.body;
+  console.log("jal;sdkfjl;");
+  console.log(chalk.red.inverse("body"), body);
+
+  // Checks this is an event from a page subscription
+  if (body.object === "page") {
+    // Iterates over each entry - there may be multiple if batched
+    body.entry.forEach(function(entry) {
+      // Gets the message. entry.messaging is an array, but
+      // will only ever contain one message, so we get index 0
+      let webhook_event = entry.messaging[0];
+      console.log(webhook_event);
+    });
+
+    // Returns a '200 OK' response to all requests
+    res.status(200).send("EVENT_RECEIVED");
+  } else {
+    // Returns a '404 Not Found' if event is not from a page subscription
+    res.sendStatus(404);
+  }
 });
 
 /* HANDLING ERROR MIDDLEWARES */
@@ -66,6 +116,6 @@ app.use((err, req, res, next) => {
 const port = 6000;
 
 /* lISTENING PORT */
-app.listen(port, function() {
+app.listen(process.env.PORT || port, function() {
   console.log("Node server is up and running.. on ", port);
 });
