@@ -86,34 +86,39 @@ app.get("/webhook", (req, res) => {
 });
 
 // Creates the endpoint for our webhook
-app.post("/webhook", (req, res) => {
-  let body = req.body;
-  console.log("jal;sdkfjl;");
-  console.log(chalk.red.inverse("body"), body);
+app.post("/webhook", async (req, res) => {
+  try {
+    let body = req.body;
+    console.log("jal;sdkfjl;");
+    console.log(chalk.green.inverse("body"), body);
 
-  // Checks this is an event from a page subscription
-  if (body.object === "page") {
-    // Iterates over each entry - there may be multiple if batched
-    body.entry.forEach(function(entry) {
-      /* 
-        - Gets the message. entry.messaging is an array, but
-          will only ever contain one message, so we get index 0
+    // Checks this is an event from a page subscription
+    if (body.object === "page") {
+      // Iterates over each entry - there may be multiple if batched
+      body.entry.forEach(function(entry) {
+        /* 
+          - Gets the message. entry.messaging is an array, but
+            will only ever contain one message, so we get index 0
+  
+          - Gets the body of the webhook event
+                                                                  */
+        let webhook_event = entry.messaging[0];
+        console.log(webhook_event);
 
-        - Gets the body of the webhook event
-                                                                */
-      let webhook_event = entry.messaging[0];
-      console.log(webhook_event);
+        // Get the sender PSID
+        let sender_psid = webhook_event.sender.id;
+        console.log("Sender PSID: " + sender_psid);
+      });
 
-      // Get the sender PSID
-      let sender_psid = webhook_event.sender.id;
-      console.log("Sender PSID: " + sender_psid);
-    });
-
-    // Returns a '200 OK' response to all requests
-    res.status(200).send("EVENT_RECEIVED");
-  } else {
-    // Returns a '404 Not Found' if event is not from a page subscription
-    res.sendStatus(404);
+      // Returns a '200 OK' response to all requests
+      res.status(200).send("EVENT_RECEIVED");
+    } else {
+      // Returns a '404 Not Found' if event is not from a page subscription
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    console.log(chalk.blue.bold.inverse("\n error in server "));
+    console.log(error);
   }
 });
 
