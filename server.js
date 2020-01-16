@@ -107,16 +107,15 @@ app.post("/webhook", async (req, res) => {
   
           - Gets the body of the webhook event
                                                                   */
-        let webhook_event = entry.messaging[0];
-        console.log(webhook_event);
-
-        // Get the sender PSID
-        let sender_psid = webhook_event.sender.id;
-        console.log("Sender PSID: " + sender_psid);
+        // let webhook_event = entry.messaging[0];
+        // console.log(webhook_event);
+        // // Get the sender PSID
+        // let sender_psid = webhook_event.sender.id;
+        // console.log("Sender PSID: " + sender_psid);
       });
 
       // Returns a '200 OK' response to all requests
-      res.status(200).send("EVENT_RECEIVED");
+      // res.status(200).send("EVENT_RECEIVED");
     } else {
       // Returns a '404 Not Found' if event is not from a page subscription
       res.sendStatus(404);
