@@ -1,7 +1,57 @@
 /* IMPORTING MODULES */
 const chalk = require("chalk");
 const request = require("request");
+const mongoose = require("mongoose");
 const config = require("../dependencies/config");
+const User = require("../model/user.model");
+
+const sendTextMessage = async (sender, text) => {
+  try {
+    var messageData = {
+      text: text
+    };
+    request(
+      {
+        url: "https://graph.facebook.com/v2.6/me/messages",
+        qs: {
+          access_token: config.PAGE_ACCESS_TOKEN
+        },
+        method: "POST",
+        json: {
+          recipient: {
+            id: sender
+          },
+          message: messageData
+        }
+      },
+      function(error, response, body) {
+        if (error) {
+          console.log("Error:", error);
+        } else if (response.body.error) {
+          console.log("Error: ", response.body.error);
+        }
+      }
+    );
+  } catch (error) {
+    console.log("err in sendTextMessage Method ", error);
+  }
+};
+const addToUser = async sender => {
+  try {
+    const existingUser = await User.findOne({ sender });
+    if (existingUser) {
+      return;
+    } else {
+      const newUser = new User({
+        _id: new mongoose.Types.Object(),
+        sender: sender
+      });
+      await newUser.save();
+    }
+  } catch (error) {
+    console.log("err in add to user method ", addToUser);
+  }
+};
 
 const verifyWebhook = async (req, res, next) => {
   try {
@@ -68,34 +118,6 @@ const messageHandler = async (req, res, next) => {
     console.log("err in post webhook ", error);
   }
 };
-
-function sendTextMessage(sender, text) {
-  var messageData = {
-    text: text
-  };
-  request(
-    {
-      url: "https://graph.facebook.com/v2.6/me/messages",
-      qs: {
-        access_token: config.PAGE_ACCESS_TOKEN
-      },
-      method: "POST",
-      json: {
-        recipient: {
-          id: sender
-        },
-        message: messageData
-      }
-    },
-    function(error, response, body) {
-      if (error) {
-        console.log("Error:", error);
-      } else if (response.body.error) {
-        console.log("Error: ", response.body.error);
-      }
-    }
-  );
-}
 
 module.exports = {
   verifyWebhook,
