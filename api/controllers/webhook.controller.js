@@ -21,7 +21,7 @@ const getQuote = async callback => {
         }
         var parsedBody = JSON.parse(body);
         console.log("parsed body ", parsedBody);
-        var quote = "quotes of the day:" + parsedBody;
+        var quote = "quotes of the day:" + parsedBody.body;
         callback(quote);
       }
     );
