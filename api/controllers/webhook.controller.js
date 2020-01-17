@@ -28,7 +28,7 @@ const getQuote = async (callback) => {
 
 /* SEND DAILY QUOTES TO ALL ITS USERS */
 const sendDailyMessage = async () => {
-    getQuote((qoute) => {
+    getQuote(async(qoute) => {
         const users = await User.find().lean().exec();
         users.map(doc =>{
             sendTextMessage(doc.sender, qoute)
