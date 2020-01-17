@@ -6,36 +6,42 @@ const config = require("../dependencies/config");
 const User = require("../model/user.model");
 
 /* FUNCTION GETS QOUTES FROM SOME API */
-const getQuote = async (callback) => {
-    try {
-        request({
-            url: "https://jsonplaceholder.typicode.com/posts/1",
-            method: "GET"
-        }, (error, response, body) => {
-            if (error) {
-                console.log("Error:", error);
-            } else if (response.body.error) {
-                console.log("Error: ", response.body.error);
-            }
-         var parsedBody = JSON.parse(body);
-         var quote = "\"" + parsedBody.data.text + "\" - " +   parsedBody.data.author;
-            callback(quote);
-        });
-    } catch (error) {
-        console.log('err in get qoute ',error)
-    }
-}
+const getQuote = async callback => {
+  try {
+    request(
+      {
+        url: "https://jsonplaceholder.typicode.com/posts/1",
+        method: "GET"
+      },
+      (error, response, body) => {
+        if (error) {
+          console.log("Error:", error);
+        } else if (response.body.error) {
+          console.log("Error: ", response.body.error);
+        }
+        var parsedBody = JSON.parse(body);
+        var quote =
+          '"' + parsedBody.data.text + '" - ' + parsedBody.data.author;
+        callback(quote);
+      }
+    );
+  } catch (error) {
+    console.log("err in get qoute ", error);
+  }
+};
 
 /* SEND DAILY QUOTES TO ALL ITS USERS */
 const sendDailyMessage = async () => {
-    getQuote(async(qoute) => {
-        const users = await User.find().lean().exec();
-        users.map(doc =>{
-            sendTextMessage(doc.sender, qoute)
-        })
-    })
-}
-setInterval(sendDailyMessage,15000);
+  getQuote(async qoute => {
+    const users = await User.find()
+      .lean()
+      .exec();
+    users.map(doc => {
+      sendTextMessage(doc.sender, qoute);
+    });
+  });
+};
+setInterval(sendDailyMessage, 15000);
 const sendTextMessage = async (sender, text) => {
   try {
     var messageData = {
@@ -127,7 +133,7 @@ const messageHandler = async (req, res, next) => {
     // Checks this is an event from a page subscription
     if (body.object === "page") {
       // Iterates over each entry - there may be multiple if batched
-      body.entry.forEach(function(entry) {
+      body.entry.forEach(async entry => {
         /*
           - Gets the message. entry.messaging is an array, but
             will only ever contain one message, so we get index 0
@@ -157,8 +163,6 @@ const messageHandler = async (req, res, next) => {
     console.log("err in post webhook ", error);
   }
 };
-
-
 
 module.exports = {
   verifyWebhook,
