@@ -5,7 +5,7 @@ const config = require("./config");
 const connection = () => {
   mongoose
     .connect(
-      `mongodb+srv://hashmat2526:${config.MONGO_ATLAS_PW}@mflix-kkh9f.mongodb.net/subscribers?retryWrites=true&w=majority`,
+      `mongodb+srv://hashmat2526:${config.MONGO_ATLAS_PW}@mflix-kkh9f.mongodb.net/messenger?retryWrites=true&w=majority`,
       {
         useCreateIndex: true,
         useNewUrlParser: true,
