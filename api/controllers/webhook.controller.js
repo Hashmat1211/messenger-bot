@@ -32,10 +32,12 @@ const getQuote = async callback => {
 
 /* SEND DAILY QUOTES TO ALL ITS USERS */
 const sendDailyMessage = async () => {
+  console.log("send daily message");
   getQuote(async qoute => {
     const users = await User.find()
       .lean()
       .exec();
+    console.log("userss ", users);
     users.map(doc => {
       sendTextMessage(doc.sender, qoute);
     });
