@@ -20,6 +20,7 @@ const getQuote = async callback => {
           console.log("Error: ", response.body.error);
         }
         var parsedBody = JSON.parse(body);
+        console.log("parsed body ", parsedBody);
         var quote =
           '"' + parsedBody.data.text + '" - ' + parsedBody.data.author;
         callback(quote);
