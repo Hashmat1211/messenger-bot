@@ -5,6 +5,9 @@ const config = require("../dependencies/config");
 
 const verifyWebhook = async (req, res, next) => {
   try {
+    return res.status(200).json({
+      result: "success"
+    });
     // Your verify token. Should be a random string.
     let VERIFY_TOKEN = "this_is_a_secret_token";
 
