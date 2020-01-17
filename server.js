@@ -26,7 +26,7 @@ app.use(cors);
 
 /*  ROUTE */
 app.get("/", (req, res) => {
-  res.send("working fine");
+  res.send("working fine 2");
 });
 
 const webhookRoutes = require("./api/routes/webhook.route");
