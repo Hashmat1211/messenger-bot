@@ -145,8 +145,8 @@ const messageHandler = async (req, res, next) => {
         // Get the sender PSID
         let sender_psid = webhook_event.sender.id;
         console.log("Sender PSID: " + sender_psid);
-        if (webhook_event.message && event.message.text) {
-          let text = event.message.text.toLowerCase();
+        if (webhook_event.message && webhook_event.message.text) {
+          let text = webhook_event.message.text.toLowerCase();
           if (text === "start" || text === "add") {
             await addToUser(sender_psid);
           } else if (text === "stop" || text === "remove") {
