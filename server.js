@@ -1,6 +1,10 @@
 "use strict";
 
 /* IMPORTING MODULES */
+const https = require("https");
+setInterval(function() {
+  https.get("https://yours.herokuapp.com");
+}, 300000); // 5 Minutes
 
 const express = require("express");
 const app = express();
