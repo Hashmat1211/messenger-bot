@@ -4,6 +4,7 @@ const request = require("request");
 const mongoose = require("mongoose");
 const config = require("../dependencies/config");
 const User = require("../model/user.model");
+const { processMessageInDialogFlow } = require("./process-message");
 
 /* FUNCTION GETS QOUTES FROM SOME API */
 const getQuote = async callback => {
@@ -43,38 +44,8 @@ const sendDailyMessage = async () => {
     });
   });
 };
-setInterval(sendDailyMessage, 15000);
-const sendTextMessage = async (sender, text) => {
-  try {
-    var messageData = {
-      text: text
-    };
-    request(
-      {
-        url: "https://graph.facebook.com/v2.6/me/messages",
-        qs: {
-          access_token: config.PAGE_ACCESS_TOKEN
-        },
-        method: "POST",
-        json: {
-          recipient: {
-            id: sender
-          },
-          message: messageData
-        }
-      },
-      function(error, response, body) {
-        if (error) {
-          console.log("Error:", error);
-        } else if (response.body.error) {
-          console.log("Error: ", response.body.error);
-        }
-      }
-    );
-  } catch (error) {
-    console.log("err in sendTextMessage Method ", error);
-  }
-};
+// setInterval(sendDailyMessage, 15000);
+
 const addToUser = async sender => {
   try {
     const existingUser = await User.findOne({ sender });
@@ -143,8 +114,10 @@ const messageHandler = async (req, res, next) => {
           - Gets the body of the webhook event                     */
         console.log("messaging ", entry.messaging);
         let webhook_event = entry.messaging[0];
-        console.log(webhook_event);
-        // Get the sender PSID
+        console.log("event ", webhook_event);
+        processMessageInDialogFlow(webhook_event);
+
+        /*   Get the sender PSID
         let sender_psid = webhook_event.sender.id;
         console.log("Sender PSID: " + sender_psid);
         if (webhook_event.message && webhook_event.message.text) {
@@ -155,7 +128,7 @@ const messageHandler = async (req, res, next) => {
             await User.deleteOne({ sender: sender_psid });
           }
           sendTextMessage(sender_psid, "intazar kejyea");
-        }
+        } */
       });
 
       // Returns a '200 OK' response to all requests
