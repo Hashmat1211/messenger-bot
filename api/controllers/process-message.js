@@ -67,15 +67,10 @@ const processMessageInDialogFlow = async webhook_event => {
         }
       }
     };
-    sessionClient
-      .detectIntent(request)
-      .then(responses => {
-        const result = responses[0].queryResult;
-        return sendTextMessage(userId, result.fulfillmentText);
-      })
-      .catch(err => {
-        console.error("ERROR:", err);
-      });
+    console.log("changed everything to async");
+    const response = await sessionClient.detectIntent(request);
+    const result = responses[0].queryResult;
+    return sendTextMessage(userId, result.fulfillmentText);
   } catch (error) {
     console.log("err in sendTextMessage ", error);
   }
