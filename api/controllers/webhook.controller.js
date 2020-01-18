@@ -101,7 +101,6 @@ const verifyWebhook = async (req, res, next) => {
 const messageHandler = async (req, res, next) => {
   try {
     let body = req.body;
-    console.log("\n body \n", body);
     // return res.status(200).send(`O K`);
     // Checks this is an event from a page subscription
     if (body.object === "page") {
@@ -112,9 +111,7 @@ const messageHandler = async (req, res, next) => {
             will only ever contain one message, so we get index 0
 
           - Gets the body of the webhook event                     */
-        console.log("messaging ", entry.messaging);
         let webhook_event = entry.messaging[0];
-        console.log("event ", webhook_event);
         processMessageInDialogFlow(webhook_event);
 
         /*   Get the sender PSID

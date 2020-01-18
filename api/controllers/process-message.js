@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const chalk = require("chalk");
 const {
   DIALOGFLOW_PRIVATE_KEY,
   DIALOGFLOW_CLIENT_EMAIL,
@@ -67,9 +68,13 @@ const processMessageInDialogFlow = async webhook_event => {
         }
       }
     };
-    console.log("changed everything to async");
+
+    console.log(chalk.green.bold.inverse("request"), request);
+    console.log(chalk.red.bold.inverse("changed everything to async"));
     const responses = await sessionClient.detectIntent(request);
+    console.log(chalk.green.bold.inverse("responses"), responses);
     const result = responses[0].queryResult;
+    console.log(chalk.green.bold.inverse("result"), result);
     return sendTextMessage(userId, result.fulfillmentText);
   } catch (error) {
     console.log("err in sendTextMessage ", error);
